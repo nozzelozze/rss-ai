@@ -21,31 +21,45 @@ class RSSAI:
     def __init__(
         self, 
         rss_urls: List[str],
-        openai_api_key: str
+        openai_api_key: str,
+        assistant_id_or_model: str,
+        model_prompts: List[str],
+        rewrite_title: bool,
+        rewrite_description: bool,
+        rss_file_name: str,
+        max_articles: int,
+        rss: dict
     ) -> None:
         
         self.rss_urls = rss_urls
         self.openai_api_key = openai_api_key
         
+        self.rewrite_title = rewrite_title
+        self.rewrite_description = rewrite_description
         self.new_articles: List[Dict[str, str]] = []
-        self.parser = RSSParser() # config here what should it parse
-        self.llm = LLM() # config here
-        self.feed = RSSFeed() # config here
-
+        self.parser = RSSParser()
+        self.feed = RSSFeed(rss_file_name, max_articles, rss)
+        self.llm = LLM(openai_api_key, assistant_id_or_model, model_prompts)
+    
     def run(self):
-        
         for rss_url in self.rss_urls:
+            articles = self.parser.parse(rss_url)
             
-            parsed_feed = self.parser.parse_rss_feed(rss_url)
+            for article in articles:
+                new_title, new_description = self.llm.rewrite(article.title, article.description)
+                if self.rewrite_title:
+                    article["title"] = new_title
+
+                if self.rewrite_description:
+                    article["description"] = new_description
+
+                break # break for now
             
-            title, desc = self.llm.rewrite_article(parsed_feed[0]["title"], parsed_feed[0]["description"])
+            self.feed.update(articles[:1])
             
-            self.feed.update([{"title": title, "description": desc}])
-            
-            break
+            break # break for now
         
         print("Done")
-        
         
     @classmethod
     def from_yaml(cls, path: str):

@@ -3,6 +3,7 @@ config.yml
 1.xml
 2.xml
 3.xml
+feed.obj
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
