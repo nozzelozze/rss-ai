@@ -35,28 +35,29 @@ class RSSFeed:
                 fg = pickle.load(f)
 
         existing_entries = list(feedparser.parse(fg.rss_str()).entries)
+        existing_entries.reverse()
 
+        temp_fg = self.get_generator()
         for article in articles:
-            fe = fg.add_entry()
+            fe = temp_fg.add_entry()
             fe.title(article["title"])
             fe.description(article["description"])
             fe.pubDate(datetime.now(tz=pytz.timezone("Europe/Stockholm")))
 
-        all_entries = existing_entries + list(feedparser.parse(fg.rss_str()).entries)
-        all_entries.sort(key=lambda x: x["published"], reverse=True)
-
-        fg = self.get_generator()
-        for entry in all_entries[:self.max_articles]:
-            fe = fg.add_entry()
+        all_entries = existing_entries + list(feedparser.parse(temp_fg.rss_str()).entries)
+        
+        final_fg = self.get_generator()
+        for entry in all_entries[-self.max_articles:]:
+            fe = final_fg.add_entry()
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
 
-        rss_feed = fg.rss_str(pretty=True)
+        rss_feed = final_fg.rss_str(pretty=True)
         rss_feed = rss_feed.decode("utf-8")
 
         with open(self.file_name, "w", encoding="utf-8") as f:
             f.write(rss_feed)
 
         with open("feed.obj", "wb") as f:
-            pickle.dump(fg, f)
+            pickle.dump(final_fg, f)
