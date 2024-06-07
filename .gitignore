@@ -5,6 +5,7 @@ config.yml
 3.xml
 feed.obj
 myfeed
+processed.obj
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

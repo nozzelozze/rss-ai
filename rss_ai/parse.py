@@ -8,8 +8,17 @@ from bs4 import BeautifulSoup
 
 class RSSParser:
     
-    def __init__(self, grab_article_count: int) -> None:
+    def __init__(
+        self, 
+        grab_article_count: int,
+        rss_urls: List[str],
+        rewrite_title: bool,
+        rewrite_description: bool,
+    ) -> None:
         self.grab_article_count = grab_article_count
+        self.rss_urls = rss_urls
+        self.rewrite_title = rewrite_title
+        self.rewrite_description = rewrite_description
         self.processed = self.load_processed()
     
     def load_processed(self) -> Set[str]:
@@ -29,24 +38,29 @@ class RSSParser:
         with open("processed.obj", "wb") as f:
             pickle.dump(self.processed, f)
     
-    def parse(self, url: str) -> List[dict]:
-        """
-        Returns all articles in a feed, with descriptions stripped to plain text if they contain HTML.
-        """
+    def get_articles_from_url(self, url: str):
         feed = feedparser.parse(url)
         
         sorted_entries = []
         
+        if feed.entries == None:
+            return []
+        
         for entry in list(feed.entries)[:self.grab_article_count]:
             
-            #if self.is_duplicate(entry):
-            #    continue
+            if self.is_duplicate(entry):
+                continue
             
             soup = BeautifulSoup(entry.description, "html.parser")
             stripped_description = soup.get_text()
             entry.description = stripped_description
             sorted_entries.append(entry)
-            #self.process_entry(entry)
-            
+            self.process_entry(entry)
         
         return sorted_entries
+    
+    def get_articles(self) -> List[dict]:
+        all_articles = []
+        for rss_url in self.rss_urls:
+            all_articles.extend(self.get_articles_from_url(rss_url))
+        return all_articles

@@ -10,17 +10,17 @@ import pytz
 
 class RSSFeed:
     
-    def __init__(self, file_name: str, max_articles: int, rss_config: dict) -> None:
+    def __init__(self, file_name: str, max_articles: int, info: dict) -> None:
         self.file_name = file_name
         self.max_articles = max_articles
-        self.rss_config = rss_config
+        self.info = info
     
     def get_generator(self) -> FeedGenerator:
         fg = FeedGenerator()
-        fg.title(self.rss_config["title"])
-        fg.link(href=self.rss_config["link"])
-        fg.description(self.rss_config["description"])
-        fg.language(self.rss_config["language"])
+        fg.title(self.info["title"])
+        fg.link(href=self.info["link"])
+        fg.description(self.info["description"])
+        fg.language(self.info["language"])
         return fg
     
     def update(self, articles: List[dict]):

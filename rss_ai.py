@@ -20,48 +20,29 @@ class RSSAI:
     
     def __init__(
         self, 
-        rss_urls: List[str],
-        openai_api_key: str,
-        assistant_id_or_model: str,
-        model_prompts: List[str],
-        rewrite_title: bool,
-        rewrite_description: bool,
-        rss_file_name: str,
-        max_articles: int,
-        rss: dict,
-        grab_article_count: int
+        LMMConfig,
+        RSSParserConfig,
+        RSSFeedConfig,
     ) -> None:
-        
-        self.rss_urls = rss_urls
-        self.openai_api_key = openai_api_key
-        
-        self.rewrite_title = rewrite_title
-        self.rewrite_description = rewrite_description
         self.new_articles: List[Dict[str, str]] = []
-        self.parser = RSSParser(grab_article_count)
-        self.feed = RSSFeed(rss_file_name, max_articles, rss)
-        self.llm = LLM(openai_api_key, assistant_id_or_model, model_prompts)
+        self.parser = RSSParser(**RSSParserConfig)
+        self.feed = RSSFeed(**RSSFeedConfig)
+        self.llm = LLM(**LMMConfig)
     
     def run(self):
-        for rss_url in self.rss_urls:
-            articles = self.parser.parse(rss_url)
-            
-            for article in articles:
-                """                 new_title, new_description = self.llm.rewrite(article.title, article.description)
-                if self.rewrite_title:
-                    article["title"] = new_title
+        articles = self.parser.get_articles()
+        for article in articles:
+            """
+            new_title, new_description = self.llm.rewrite(article.title, article.description)
+            if self.rewrite_title:
+                article["title"] = new_title
 
-                if self.rewrite_description:
-                    article["description"] = new_description """
-                
-                article["description"] = "YEP!"
-                
-                break # break for now
-            self.feed.update(articles[:1])
+            if self.rewrite_description:
+                article["description"] = new_description
+            """
             
-            break # break for now
-        
-        print("Done")
+            article["description"] = "YEP!"
+        self.feed.update(articles)
         
     @classmethod
     def from_yaml(cls, path: str):
