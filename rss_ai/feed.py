@@ -3,9 +3,8 @@ import os
 import pickle
 from typing import List
 from feedgen.feed import FeedGenerator
-from datetime import datetime, timezone
-import xml.etree.ElementTree as ET
-from pathlib import Path
+from datetime import datetime
+from loguru import logger
 import pytz
 
 class RSSFeed:
@@ -23,6 +22,7 @@ class RSSFeed:
         fg.language(self.info["language"])
         return fg
     
+    @logger.catch
     def update(self, articles: List[dict]):
         """
         Updates the RSS feed.
