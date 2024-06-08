@@ -14,13 +14,9 @@ class RSSParser:
         self, 
         grab_article_count: int,
         rss_urls: List[str],
-        rewrite_title: bool,
-        rewrite_description: bool,
     ) -> None:
         self.grab_article_count = grab_article_count
         self.rss_urls = rss_urls
-        self.rewrite_title = rewrite_title
-        self.rewrite_description = rewrite_description
         self.processed = self.load_processed()
         self.original_processed = self.load_processed()
         self.only_new = []

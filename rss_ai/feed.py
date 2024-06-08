@@ -43,6 +43,8 @@ class RSSFeed:
             fe.title(article["title"])
             fe.description(article["description"])
             fe.pubDate(datetime.now(tz=pytz.timezone("Europe/Stockholm")))
+            if "GENERATED_IMAGE" in article and article["GENERATED_IMAGE"] is not None:
+                fe.enclosure(article["GENERATED_IMAGE"], 0, "image/jpeg")
 
         all_entries = existing_entries + list(feedparser.parse(temp_fg.rss_str()).entries)
         
@@ -52,7 +54,9 @@ class RSSFeed:
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
-
+            if "GENERATED_IMAGE" in article and article["GENERATED_IMAGE"] is not None:
+                fe.enclosure(article["GENERATED_IMAGE"], 0, "image/jpeg")
+                
         rss_feed = final_fg.rss_str(pretty=True)
         rss_feed = rss_feed.decode("utf-8")
 

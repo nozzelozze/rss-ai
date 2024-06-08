@@ -36,19 +36,16 @@ class RSSAI:
         articles = self.parser.get_entries()
         logger.info("Rewriting articles...")
         for article in articles:
-            """             response = self.llm.rewrite(article.title, article.description)
-            if response == None:
+            rewritten_article = self.llm.rewrite(article)
+            
+            if rewritten_article == None:
                 articles.remove(article)
                 logger.error("recieved no rewritten article, skipping")
                 continue
-            new_title, new_description = response
-            if self.rewrite_title:
-                article["title"] = new_title
-
-            if self.rewrite_description:
-                article["description"] = new_description """
             
-            article["description"] = "YEP!"
+            article = rewritten_article
+            logger.info(f"article with title '{article["title"]}' rewritten")
+                
         logger.info("Updating RSS feed...")
         self.feed.update(articles)
         now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
