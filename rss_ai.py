@@ -33,7 +33,7 @@ class RSSAI:
     def run(self):
         logger.info("Starting run...")
         logger.info("Getting articles...")
-        articles = self.parser.get_articles()
+        articles = self.parser.get_entries()
         logger.info("Rewriting articles...")
         for article in articles:
             """             response = self.llm.rewrite(article.title, article.description)
@@ -51,7 +51,9 @@ class RSSAI:
             article["description"] = "YEP!"
         logger.info("Updating RSS feed...")
         self.feed.update(articles)
-        logger.info(f"Run done at {datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")}")
+        now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
+        logger.info(f"Run done at {now}")
+        open("latestrun.txt", "w").write(now)
         
     @classmethod
     def from_yaml(cls, path: str):
