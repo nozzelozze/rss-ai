@@ -31,7 +31,7 @@ class RSSParser:
         return self.get_entry_id(entry) in self.original_processed
         
     def get_entry_id(self, entry) -> str:
-        return hashlib.md5(str(entry.link).encode()).hexdigest()
+        return hashlib.md5(str(entry["link"]).encode()).hexdigest()
     
     def get_articles_from_url(self, url: str):
         feed = feedparser.parse(url)
@@ -45,6 +45,9 @@ class RSSParser:
             
             self.only_new.append(self.get_entry_id(entry))
             if self.is_duplicate(entry):
+                continue
+            
+            if not "description" in entry:
                 continue
             
             soup = BeautifulSoup(entry.description, "html.parser")
@@ -64,6 +67,10 @@ class RSSParser:
                 
         with open(PROCESSED_PATH, "wb") as f:
             pickle.dump(cleaned, f)
+            
+    def clean_entry(self, entry) -> None:
+        with open(PROCESSED_PATH, "wb") as f:
+            pickle.dump([e for e in self.processed if e != self.get_entry_id(entry)], f)
             
     def get_entries(self) -> List[dict]:
         all_entries = []

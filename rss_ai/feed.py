@@ -54,8 +54,11 @@ class RSSFeed:
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
-            if "GENERATED_IMAGE" in article and article["GENERATED_IMAGE"] is not None:
-                fe.enclosure(article["GENERATED_IMAGE"], 0, "image/jpeg")
+            print(entry)
+            if "links" in entry:
+                for link in entry.links:
+                    if link.rel == "enclosure":
+                        fe.enclosure(link.href, 0, "image/jpeg")
                 
         rss_feed = final_fg.rss_str(pretty=True)
         rss_feed = rss_feed.decode("utf-8")
