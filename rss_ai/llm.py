@@ -1,6 +1,7 @@
 import base64
 import ftplib
 import io
+import time
 from typing import List, Literal, Tuple
 import uuid
 from openai import OpenAI
@@ -80,7 +81,35 @@ class LLM:
         response: str
         if self.method == "assistant":
             
-            return
+            assistant = self.client.beta.assistants.retrieve(self.assistant_id_or_model)
+            
+            thread = self.client.beta.threads.create()
+            
+            message = self.client.beta.threads.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content=f"\n\n{article["title"]}\n{article["description"]}"
+            )
+            
+            run = self.client.beta.threads.runs.create(
+                thread_id=thread.id,
+                assistant_id=assistant.id,
+            )
+            
+            while True:
+                run_status = self.client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+                if run_status.status == "completed":
+                    break
+                elif run_status.status == "failed":
+                    logger.error("Run failed:", run_status.last_error)
+                    return None
+                time.sleep(.1)
+        
+            messages = self.client.beta.threads.messages.list(
+                thread_id=thread.id
+            )
+                        
+            response = messages.data[0].content[0].text.value
         if self.method == "model":
             
             completion = self.client.chat.completions.create(
@@ -107,7 +136,7 @@ class LLM:
         if self.rewrite_body or self.rewrite_title:
             article = self.title_and_body(article)
             
-        if self.generate_image:
+        if self.generate_image and article != None:
             article = self.image(article)
         
         return article
