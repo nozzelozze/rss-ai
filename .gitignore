@@ -8,7 +8,6 @@ myfeed
 processed.obj
 logs/
 latestrun.txt
-pickles/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

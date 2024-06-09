@@ -55,7 +55,6 @@ class RSSFeed:
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
-            print(entry)
             if "links" in entry:
                 for link in entry.links:
                     if link.rel == "enclosure":
