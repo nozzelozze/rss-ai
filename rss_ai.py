@@ -1,4 +1,4 @@
-import pickle
+import traceback
 import pytz
 import yaml
 from typing import Dict, List
@@ -37,20 +37,26 @@ class RSSAI:
         articles = self.parser.get_entries()
         logger.info("Rewriting articles...")
         original_articles = {}
-        for article in articles:
+        for article in articles:  
             original_articles[article] = article.copy()
             rewritten_article = self.llm.rewrite(article)
             if rewritten_article == None:
                 articles.remove(article)
                 self.parser.clean_entry(original_articles[article])
-                logger.error("recieved no rewritten article, skipping")
+                logger.error("recieved no rewritten article, skipping.")
                 continue
                 
-            logger.info(f"article with title '{article["title"]}' rewritten")
+            try:
+                self.feed.update([article])
+            except Exception as e:
+                articles.remove(article)
+                self.parser.clean_entry(original_articles[article])
+                logger.error("Couldn't add article, skipping. Error: {}", e)
+                logger.error("Stack trace:\n{}", traceback.format_exc())
+                continue
+            
+            logger.info(f"article with title '{article["title"]}' rewritten and added")
         
-        self.feed.update(articles)
-        
-        logger.info("Updating RSS feed...")
         now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
         logger.info(f"Run done at {now}")
         open("latestrun.txt", "w").write(now)

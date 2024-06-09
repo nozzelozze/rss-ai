@@ -21,8 +21,7 @@ class RSSFeed:
         fg.description(self.info["description"])
         fg.language(self.info["language"])
         return fg
-    
-    @logger.catch
+
     def update(self, articles: List[dict]):
         """
         Updates the RSS feed.
