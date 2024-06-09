@@ -7,6 +7,8 @@ from datetime import datetime
 from loguru import logger
 import pytz
 
+FEED_PATH = "pickles/feed.obj"
+
 class RSSFeed:
     
     def __init__(self, file_name: str, max_articles: int, info: dict) -> None:
@@ -29,8 +31,8 @@ class RSSFeed:
             articles (List[dict]): The articles that should be added to the RSS feed.
         """
         fg = self.get_generator()
-        if os.path.exists("feed.obj"):
-            with open("feed.obj", "rb") as f:
+        if os.path.exists(FEED_PATH):
+            with open(FEED_PATH, "rb") as f:
                 fg = pickle.load(f)
 
         existing_entries = list(feedparser.parse(fg.rss_str()).entries)
@@ -65,5 +67,5 @@ class RSSFeed:
         with open(self.file_name, "w", encoding="utf-8") as f:
             f.write(rss_feed)
 
-        with open("feed.obj", "wb") as f:
+        with open(FEED_PATH, "wb") as f:
             pickle.dump(final_fg, f)

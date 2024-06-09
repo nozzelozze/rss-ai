@@ -32,7 +32,8 @@ class RSSAI:
         self.llm = LLM(**LMMConfig)
     
     def run(self):
-        logger.info("Starting run...")
+        now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
+        logger.info(f"Starting run at {now}")
         logger.info("Getting articles...")
         articles = self.parser.get_entries()
         logger.info("Rewriting articles...")
@@ -43,7 +44,7 @@ class RSSAI:
             if rewritten_article == None:
                 articles.remove(article)
                 self.parser.clean_entry(original_articles[article])
-                logger.error("recieved no rewritten article, skipping.")
+                logger.error("Recieved no rewritten article, skipping.")
                 continue
                 
             try:
@@ -55,7 +56,7 @@ class RSSAI:
                 logger.error("Stack trace:\n{}", traceback.format_exc())
                 continue
             
-            logger.info(f"article with title '{article["title"]}' rewritten and added")
+            logger.info(f"Article with title '{article["title"]}' rewritten and added")
         
         now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
         logger.info(f"Run done at {now}")

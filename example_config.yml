@@ -1,0 +1,35 @@
+LMMConfig:
+  assistant_id_or_model: gpt-4o
+  generate_image: true
+  image_model: dall-e-3
+  image_prompt: 'Generate a fitting image for this article:'
+  ftp:
+    server: localhost
+    port: 21
+    user: test
+    password: test
+    virtual_images_path: /
+    images_url_directory: C:/Users/username/images/
+  image_size: 1024x1024
+  rewrite_body: true
+  rewrite_title: true
+  model_prompts:
+  - You are a helpful assistant that summarizes articles in swedish.
+  - 'Summarize this article to five short swedish sentences and rewrite the title
+    in swedish. Make the title different from the original. Respond with the title
+    first, then one empty line, followed by the summarization. Don''t use markdown
+    headers, and instead use regular text. The title and article text:'
+  openai_api_key: sk-...
+RSSFeedConfig:
+  file_name: myfeed
+  info:
+    description: Summarized News
+    language: en
+    link: https://www.example.com
+    title: Summarized News
+  max_articles: 15
+RSSParserConfig:
+  grab_article_count: 3
+  rss_urls:
+  - https://.../feed/
+  - https://.../feed/

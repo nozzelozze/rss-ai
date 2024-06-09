@@ -6,7 +6,7 @@ from typing import List, Set
 import feedparser
 from bs4 import BeautifulSoup
 
-PROCESSED_PATH = "processed.obj"
+PROCESSED_PATH = "pickles/processed.obj"
 
 class RSSParser:
     
