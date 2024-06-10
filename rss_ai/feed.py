@@ -11,10 +11,11 @@ FEED_PATH = "pickles/feed.obj"
 
 class RSSFeed:
     
-    def __init__(self, file_name: str, max_articles: int, info: dict) -> None:
+    def __init__(self, file_name: str, path_to_file: str, max_articles: int, info: dict) -> None:
         self.file_name = file_name
         self.max_articles = max_articles
         self.info = info
+        self.path_to_file = path_to_file
     
     def get_generator(self) -> FeedGenerator:
         fg = FeedGenerator()
@@ -63,7 +64,7 @@ class RSSFeed:
         rss_feed = final_fg.rss_str(pretty=True)
         rss_feed = rss_feed.decode("utf-8")
 
-        with open(self.file_name, "w", encoding="utf-8") as f:
+        with open(self.path_to_file + self.file_name, "w", encoding="utf-8") as f:
             f.write(rss_feed)
 
         with open(FEED_PATH, "wb") as f:

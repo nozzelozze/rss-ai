@@ -22,6 +22,7 @@ LMMConfig:
   openai_api_key: sk-...
 RSSFeedConfig:
   file_name: myfeed
+  path_to_file: ./
   info:
     description: Summarized News
     language: en

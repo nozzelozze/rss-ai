@@ -37,6 +37,8 @@ class RSSAI:
         logger.info("Getting articles...")
         articles = self.parser.get_entries()
         logger.info("Rewriting articles...")
+        if len(articles) == 0:
+            logger.info("No new articles, not rewriting anything.")
         original_articles = {}
         for article in articles:  
             original_articles[article] = article.copy()
