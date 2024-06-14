@@ -59,7 +59,7 @@ class RSSAI:
                 continue
             
             logger.info(f"Article with title '{article["title"]}' rewritten and added")
-        
+        self.feed.update([])
         now = datetime.now(tz=pytz.timezone("Europe/Stockholm")).strftime("%d/%m/%Y, %H:%M:%S")
         logger.info(f"Run done at {now}")
         open("latestrun.txt", "w").write(now)

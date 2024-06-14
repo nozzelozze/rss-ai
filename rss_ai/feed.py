@@ -48,7 +48,7 @@ class RSSFeed:
             if "GENERATED_IMAGE" in article and article["GENERATED_IMAGE"] is not None:
                 fe.enclosure(article["GENERATED_IMAGE"], 0, "image/jpeg")
 
-        all_entries = existing_entries + list(feedparser.parse(temp_fg.rss_str()).entries)
+        all_entries = existing_entries + list(feedparser.parse(temp_fg.rss_str()).entries) 
         
         final_fg = self.get_generator()
         for entry in all_entries[-self.max_articles:]:
@@ -56,6 +56,7 @@ class RSSFeed:
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
+            print(entry)
             if "links" in entry:
                 for link in entry.links:
                     if link.rel == "enclosure":
@@ -65,7 +66,7 @@ class RSSFeed:
         rss_feed = rss_feed.decode("utf-8")
 
         with open(self.path_to_file + self.file_name, "w", encoding="utf-8") as f:
-            f.write(rss_feed)
+            f.write(rss_feed.replace('<enclosure url=', '<image src=').replace('length="0" type="image/jpeg"/>', '/>'))
 
         with open(FEED_PATH, "wb") as f:
             pickle.dump(final_fg, f)
