@@ -44,6 +44,7 @@ class RSSFeed:
             fe = temp_fg.add_entry()
             fe.title(article["title"])
             fe.description(article["description"])
+            fe.category({"term": article["OWN_CATEGORY"]})
             fe.pubDate(datetime.now(tz=pytz.timezone("Europe/Stockholm")))
             if "GENERATED_IMAGE" in article and article["GENERATED_IMAGE"] is not None:
                 fe.enclosure(article["GENERATED_IMAGE"], 0, "image/jpeg")
@@ -56,7 +57,7 @@ class RSSFeed:
             fe.title(entry.title)
             fe.description(entry.description)
             fe.pubDate(entry.published)
-            print(entry)
+            fe.category({"term": entry.category})
             if "links" in entry:
                 for link in entry.links:
                     if link.rel == "enclosure":

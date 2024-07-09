@@ -32,5 +32,7 @@ RSSFeedConfig:
 RSSParserConfig:
   grab_article_count: 3
   rss_urls:
-  - https://.../feed/
-  - https://.../feed/
+    my_category_1:
+      - https://.../feed/
+    my_category_2:
+      - https://.../feed/

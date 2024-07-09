@@ -2,7 +2,7 @@ import hashlib
 import json
 import os
 import pickle
-from typing import List, Set
+from typing import Dict, List, Set
 import feedparser
 from bs4 import BeautifulSoup
 
@@ -13,7 +13,7 @@ class RSSParser:
     def __init__(
         self, 
         grab_article_count: int,
-        rss_urls: List[str],
+        rss_urls: Dict[str, List[str]],
     ) -> None:
         self.grab_article_count = grab_article_count
         self.rss_urls = rss_urls
@@ -33,7 +33,7 @@ class RSSParser:
     def get_entry_id(self, entry) -> str:
         return hashlib.md5(str(entry["link"]).encode()).hexdigest()
     
-    def get_articles_from_url(self, url: str):
+    def get_articles_from_url(self, url: str, category: str):
         feed = feedparser.parse(url)
         
         sorted_entries = []
@@ -53,6 +53,7 @@ class RSSParser:
             soup = BeautifulSoup(entry.description, "html.parser")
             stripped_description = soup.get_text()
             entry.description = stripped_description
+            entry["OWN_CATEGORY"] = category
             sorted_entries.append(entry)
             self.processed.append(self.get_entry_id(entry))
         
@@ -74,7 +75,8 @@ class RSSParser:
             
     def get_entries(self) -> List[dict]:
         all_entries = []
-        for rss_url in self.rss_urls:
-            all_entries.extend(self.get_articles_from_url(rss_url))
+        for category, urls in self.rss_urls.items():
+            for url in urls:
+                all_entries.extend(self.get_articles_from_url(url, category))
         self.clean_processes()
         return all_entries

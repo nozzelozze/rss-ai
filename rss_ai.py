@@ -41,6 +41,7 @@ class RSSAI:
             logger.info("No new articles, not rewriting anything.")
         original_articles = {}
         for article in articles:  
+            print("here: ", article)
             original_articles[article] = article.copy()
             rewritten_article = self.llm.rewrite(article)
             if rewritten_article == None:
