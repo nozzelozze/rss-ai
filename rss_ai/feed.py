@@ -65,8 +65,15 @@ class RSSFeed:
         rss_feed = final_fg.rss_str(pretty=True)
         rss_feed = rss_feed.decode("utf-8")
 
+        for entry in all_entries:
+            if hasattr(entry, "links"):
+                for link in entry.links:
+                    if link.rel == "enclosure":
+                        img_tag = f'<![CDATA[<img src="{link.href}" alt="{entry.title}"><br>{entry.description}]]>'
+                        rss_feed = rss_feed.replace(entry.description, img_tag)
+
         with open(self.path_to_file + self.file_name, "w", encoding="utf-8") as f:
-            f.write(rss_feed.replace('<enclosure url=', '<image src=').replace('length="0" type="image/jpeg"/>', '/>'))
+            f.write(rss_feed)
 
         with open(FEED_PATH, "wb") as f:
             pickle.dump(final_fg, f)
